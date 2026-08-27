@@ -1,0 +1,60 @@
+{
+  "_comment": "THE ONLY PLACE IN THIS PROJECT WITH A STORED ANSWER KEY. Everything in templates.json has its answer computed by SymPy at serve time; these do not, because pigeonhole arguments do not parameterise cleanly (PROJECT.md 3.6). That makes this file the one spot where a wrong answer cannot be caught by verification, so every entry carries a 'why' field containing the full argument AND the tightness check that proves the bound cannot be lowered. Do not add an entry without both. An LLM must never write into this file; CLAUDE_CODE_HANDOFF.md 2 PHASE 1 is explicit that letting a model freestyle this node is how a wrong answer reaches a judge.",
+
+  "problems": [
+    {
+      "id": "pigeonhole_residue_collision_01",
+      "node": "pigeonhole_nt",
+      "prompt": "You pick integers one at a time, with no restrictions on which ones. What is the smallest number of integers you must pick to be GUARANTEED that two of them leave the same remainder when divided by 12?",
+      "answer_format": "A single positive integer.",
+      "answer": "13",
+      "checker": "exact",
+      "hint": "The remainders on division by 12 are the boxes. How many boxes are there, and how many objects force a repeat?",
+      "why": "There are exactly 12 possible remainders mod 12 (0 through 11). With 13 integers and 12 remainder classes, two must land in the same class. The bound is tight: 12 integers with remainders 0,1,...,11 are all distinct, so 12 is not enough."
+    },
+
+    {
+      "id": "pigeonhole_difference_divisible_01",
+      "node": "pigeonhole_nt",
+      "prompt": "What is the smallest number of integers you must choose to be GUARANTEED that some two of them have a difference divisible by 15?",
+      "answer_format": "A single positive integer.",
+      "answer": "16",
+      "checker": "exact",
+      "hint": "Two integers differ by a multiple of 15 exactly when they leave the same remainder mod 15. Now count the remainders.",
+      "why": "a - b is divisible by 15 if and only if a and b are congruent mod 15, so this is the previous problem with 15 classes: 16 integers force a repeated class. Tight because 15 integers can occupy the 15 distinct classes 0..14, and then no two differ by a multiple of 15."
+    },
+
+    {
+      "id": "pigeonhole_consecutive_block_01",
+      "node": "pigeonhole_nt",
+      "prompt": "What is the smallest n such that EVERY list of n integers contains a block of consecutive terms (one or more entries, next to each other in the list) whose sum is divisible by 9?",
+      "answer_format": "A single positive integer.",
+      "answer": "9",
+      "checker": "exact",
+      "hint": "Write down the running totals S_0 = 0, S_1, S_2, ..., S_n. A consecutive block sums to S_j - S_i. What would it mean for two running totals to share a remainder mod 9?",
+      "why": "For a list a_1..a_n form the n+1 prefix sums S_0 = 0, S_1, ..., S_n. If any two satisfy S_i = S_j (mod 9) with i < j, the block a_(i+1)..a_j sums to S_j - S_i, a multiple of 9. With n = 9 there are 10 prefix sums and only 9 residue classes, so a collision is forced. Tight: for n = 8 the list 1,1,1,1,1,1,1,1 has every consecutive block summing to a value between 1 and 8, none divisible by 9."
+    },
+
+    {
+      "id": "pigeonhole_divides_pair_01",
+      "node": "pigeonhole_nt",
+      "prompt": "From the set {1, 2, 3, ..., 20}, what is the smallest k such that ANY choice of k numbers must contain two numbers where one divides the other?",
+      "answer_format": "A single positive integer.",
+      "answer": "11",
+      "checker": "exact",
+      "hint": "Write each number as a power of 2 times an odd number. That odd part is the box: how many odd numbers are there below 20?",
+      "why": "Every integer is uniquely 2^a * m with m odd. In 1..20 the possible odd parts are 1,3,5,...,19: exactly 10 of them. Choosing 11 numbers forces two to share an odd part m, say 2^a*m and 2^b*m with a < b; then the first divides the second. Tight: the 10 numbers 11,12,...,20 contain no such pair, because for 11 <= x < y <= 20 the ratio y/x is less than 2 and so cannot be an integer."
+    },
+
+    {
+      "id": "pigeonhole_generalised_count_01",
+      "node": "pigeonhole_nt",
+      "prompt": "You pick any 30 integers. Sort them into 7 groups by their remainder when divided by 7. What is the largest k such that, no matter which 30 integers you picked, some group must end up holding at least k of them?",
+      "answer_format": "A single positive integer.",
+      "answer": "5",
+      "checker": "exact",
+      "hint": "This is the generalised pigeonhole principle: 30 objects into 7 boxes. What is the best you can guarantee for the fullest box?",
+      "why": "Generalised pigeonhole: 30 objects in 7 classes force some class to hold at least ceil(30/7) = 5. You cannot guarantee 6, because the distribution 5,5,4,4,4,4,4 totals exactly 30 with no class exceeding 5."
+    }
+  ]
+}

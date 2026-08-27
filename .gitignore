@@ -1,0 +1,9 @@
+# runtime student data — never in git, and on the server it lives OUTSIDE
+# the repo entirely (NTGEN_DATA_DIR) so a redeploy can't touch it
+data/
+
+.DS_Store
+__pycache__/
+*.pyc
+.claude/
+*.md

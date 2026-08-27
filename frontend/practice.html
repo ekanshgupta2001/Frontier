@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenges · Frontier</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><rect x='1' y='1' width='28' height='28' rx='8' fill='%2308090D' stroke='%23222A36'/><path d='M16.5 5 9 16h5l-1.5 9L21 13.5h-5.2z' fill='%236366F1'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=10">
+</head>
+<body class="dungeon">
+
+<header>
+  <a class="brand" href="/">
+    <svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect x="1" y="1" width="28" height="28" rx="8" fill="#10141B" stroke="#222A36"/><path d="M16.5 5 9 16h5l-1.5 9L21 13.5h-5.2z" fill="#6366F1"/></svg>
+    <span class="wordmark">FRONTIER</span>
+  </a>
+  <nav class="topnav">
+    <a href="/">Home</a>
+    <a href="/learn">Learn</a>
+    <a href="/practice" class="active">Challenges</a>
+  </nav>
+  <div class="head-right">
+    <span class="context">dungeon · number theory</span>
+    <div class="who" id="who" hidden>
+      <span id="who-title" class="who-title" hidden></span>
+      <span id="who-name"></span>
+      <a href="#" id="switch-user">switch</a>
+    </div>
+    <span class="avatar" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#A7B3C4" stroke-width="1.3"><circle cx="8" cy="5.4" r="2.7"/><path d="M2.5 14c.9-2.9 3-4.3 5.5-4.3s4.6 1.4 5.5 4.3"/></svg></span>
+  </div>
+</header>
+
+<!-- one cave, every screen: fixed atmosphere behind the whole page.
+     body.boss-mode retints it red through CSS; nothing here is interactive -->
+<div class="dungeon-bg" aria-hidden="true">
+  <svg class="cave-top" viewBox="0 0 1440 130" preserveAspectRatio="none">
+    <path class="cave-back" d="M0 0 H1440 V44 L1400 56 L1372 84 L1344 52 L1300 62 L1262 48 L1220 74 L1188 54 L1140 60 L1104 96 L1068 56 L1020 66 L980 46 L936 78 L900 52 L856 62 L820 104 L784 56 L736 66 L700 48 L656 82 L620 54 L576 64 L540 46 L496 74 L460 56 L416 62 L380 92 L344 52 L300 62 L264 48 L220 70 L184 54 L140 62 L104 80 L68 52 L28 60 L0 48 Z"/>
+    <path class="cave-front" d="M0 0 H1440 V30 L1400 44 L1372 92 L1344 40 L1300 52 L1262 36 L1220 74 L1188 42 L1140 50 L1104 116 L1068 46 L1020 58 L980 34 L936 84 L900 42 L856 54 L820 128 L784 48 L736 60 L700 36 L656 92 L620 44 L576 56 L540 34 L496 78 L460 46 L416 54 L380 104 L344 40 L300 52 L264 36 L220 68 L184 44 L140 54 L104 88 L68 40 L28 52 L0 36 Z"/>
+  </svg>
+  <svg class="cave-floor" viewBox="0 0 1440 90" preserveAspectRatio="none">
+    <path class="cave-front" d="M0 90 V50 L80 62 L160 34 L260 58 L360 26 L460 54 L560 38 L660 60 L760 30 L880 56 L980 36 L1080 60 L1180 32 L1280 54 L1380 40 L1440 52 V90 Z"/>
+  </svg>
+  <div class="ember ember-l"></div>
+  <div class="ember ember-r"></div>
+  <div class="floor-glow"></div>
+  <div class="vignette"></div>
+  <svg class="sketch sketch-1" width="220" height="180" viewBox="0 0 220 180">
+    <text x="30" y="24" font-family="IBM Plex Mono, monospace" font-size="14" font-style="italic" fill="#A5B4FC" opacity=".32">a &#8801; b (mod n)</text>
+    <circle cx="100" cy="108" r="56" fill="none" stroke="#6366F1" stroke-opacity=".22" stroke-width="1.2"/>
+  </svg>
+  <svg class="sketch sketch-2" width="240" height="150" viewBox="0 0 240 150">
+    <text x="56" y="20" font-family="IBM Plex Mono, monospace" font-size="13" font-style="italic" fill="#FDBA8C" opacity=".28">gcd(84, 30) = 6</text>
+    <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#7C8899" opacity=".4">
+      <text x="46" y="58">84 = 2&#183;30 + 24</text><text x="46" y="84">30 = 1&#183;24 + 6</text><text x="46" y="110">24 = 4&#183;6 + 0</text>
+    </g>
+  </svg>
+</div>
+
+<!-- ===================== screen 1: login ===================== -->
+<section id="screen-login" class="stage" hidden>
+  <div class="card dg-card login-card">
+    <div class="eyebrow ember-text">The descent awaits</div>
+    <h1>Enter the dungeon.</h1>
+    <p class="muted">
+      Three hearts. Rooms that get harder the deeper you go, drawn from the
+      skills you have unlocked in lessons. Every fifth room holds a boss.
+      How far down can you get?
+    </p>
+    <form id="login-form">
+      <input id="login-name" type="text" placeholder="Your name (e.g. ava_g)"
+             autocomplete="off" maxlength="32" spellcheck="false">
+      <button type="submit" class="primary">Start</button>
+    </form>
+    <p class="tiny muted">Same name as on Lessons; your map decides the dungeon.</p>
+  </div>
+</section>
+
+<!-- ===================== screen 2: not placed yet ===================== -->
+<section id="screen-placement" class="stage" hidden>
+  <div class="card dg-card login-card">
+    <div class="eyebrow ember-text">The gate is sealed</div>
+    <h1>First, get placed.</h1>
+    <p class="muted">
+      The dungeon builds itself from your lesson map, so it needs to know
+      where you are. A quick six-question quiz on the lessons page finds
+      your starting point; the dungeon opens right after.
+    </p>
+    <a class="btn-link" href="/learn">Go to lessons</a>
+  </div>
+</section>
+
+<!-- ===================== screen 3: lobby ===================== -->
+<section id="screen-lobby" class="stage" hidden>
+  <div class="lobby-row">
+    <div class="card dg-card lobby-card">
+      <div class="eyebrow ember-text">The descent awaits</div>
+      <h1>The Dungeon</h1>
+      <p class="muted">
+        Three hearts. A wrong answer in a room costs one; a lost boss fight
+        costs one. Consecutive correct answers build a streak that multiplies
+        your points. When the hearts run out, the run ends and your depth is
+        the record.
+      </p>
+      <div class="records-strip">
+        <div class="rec"><div class="rec-num cyan" id="rec-depth">0</div><div class="rec-label">best depth</div></div>
+        <div class="rec"><div class="rec-num" id="rec-runs">0</div><div class="rec-label">runs</div></div>
+        <div class="rec"><div class="rec-num peach" id="rec-bosses">0</div><div class="rec-label">bosses beaten</div></div>
+      </div>
+      <button id="lobby-start" class="primary wide">Enter the dungeon</button>
+    </div>
+
+    <div class="card dg-card trophy-card">
+      <h2>Trophies</h2>
+      <p class="tiny muted">Beat bosses to unlock name colors and titles.
+         Click one to wear it; click again to take it off.</p>
+      <div class="cos-label">Name colors</div>
+      <div class="cos-row" id="cos-colors"></div>
+      <div class="cos-label">Titles</div>
+      <div class="cos-row" id="cos-titles"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== screen 4: the run ===================== -->
+<section id="screen-run" hidden>
+  <div class="dungeon-wrap">
+    <div class="card run-hud">
+      <span class="hud-cell"><span class="hud-hearts" id="run-hearts" title="hearts left"></span></span>
+      <span class="hud-cell hud-room">
+        <span class="hud-room-num" id="run-room-num">01</span>
+        <span class="hud-key">rooms deep</span>
+      </span>
+      <span class="hud-cell hud-countdown" id="hud-countdown" title="rooms to the boss"></span>
+      <span class="hud-cell hud-countdown hud-bosslabel" id="hud-boss-label" hidden>
+        <span class="boss-word">Boss fight</span>
+        <span class="pips" id="boss-pips"
+              title="the gauntlet: 3 problems, 2 right beats the boss"></span>
+      </span>
+      <span class="hud-cell" title="consecutive correct answers">
+        <span class="hud-key">Streak</span>
+        <span class="hud-val lime" id="run-streak">0 · x1</span>
+      </span>
+      <span class="hud-cell" title="score">
+        <span class="hud-key">Score</span>
+        <span class="hud-val" id="run-score">0</span>
+      </span>
+    </div>
+
+    <div id="boss-intro" hidden>
+      <div class="sigil">
+        <svg class="sigil-spin" width="96" height="96" viewBox="0 0 96 96">
+          <rect x="18" y="18" width="60" height="60" fill="none" stroke="#FF5C3C" stroke-opacity=".5" transform="rotate(45 48 48)"/>
+          <rect x="26" y="26" width="44" height="44" fill="none" stroke="#FF8A6B" stroke-opacity=".35"/>
+        </svg>
+        <svg class="sigil-face" width="96" height="96" viewBox="0 0 96 96">
+          <path d="M48 26 L60 44 L48 40 L36 44 Z" fill="#FF5C3C"/>
+          <circle cx="42" cy="52" r="3" fill="#FFD9C7"/><circle cx="54" cy="52" r="3" fill="#FFD9C7"/>
+          <path d="M38 64 L48 58 L58 64" fill="none" stroke="#FF8A6B" stroke-width="2"/>
+          <text x="48" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#FF8A6B">%</text>
+        </svg>
+      </div>
+      <div class="boss-meta">
+        <div class="eyebrow ember-text" id="boss-floor"></div>
+        <div class="boss-name" id="boss-name"></div>
+        <div class="boss-note">The gauntlet: three problems, two right beats the boss.</div>
+      </div>
+    </div>
+
+    <div class="card" id="room-card">
+      <div class="q-top">
+        <span class="tag" id="run-node"></span>
+        <span class="room-floor" id="room-floor"></span>
+      </div>
+      <p class="prompt" id="run-prompt"></p>
+      <p class="tiny muted" id="run-format"></p>
+      <form id="run-form">
+        <input id="run-answer" type="text" autocomplete="off" spellcheck="false"
+               placeholder="Your answer">
+        <button type="submit" class="primary" id="run-submit">Submit</button>
+      </form>
+      <p class="feedback" id="run-feedback"></p>
+      <div id="run-hint" class="hint" hidden></div>
+      <button id="run-next" class="ghost" hidden></button>
+      <p class="tiny muted flee-row">
+        <a href="#" id="run-flee">Flee the dungeon</a>
+      </p>
+    </div>
+
+    <div class="card reward-card" id="reward-card" hidden></div>
+  </div>
+</section>
+
+<!-- ===================== screen 5: death ===================== -->
+<section id="screen-death" class="stage" hidden>
+  <div class="card dg-card death-card">
+    <div class="death-hearts">
+      <svg width="20" height="18" viewBox="0 0 22 20"><path d="M11 5c-3-5-11-4-11 2 0 5 11 11 11 11s11-6 11-11c0-6-8-7-11-2z" fill="none" stroke="#2E394A" stroke-width="1.4"/></svg>
+      <svg width="20" height="18" viewBox="0 0 22 20"><path d="M11 5c-3-5-11-4-11 2 0 5 11 11 11 11s11-6 11-11c0-6-8-7-11-2z" fill="none" stroke="#2E394A" stroke-width="1.4"/></svg>
+      <svg width="20" height="18" viewBox="0 0 22 20"><path d="M11 5c-3-5-11-4-11 2 0 5 11 11 11 11s11-6 11-11c0-6-8-7-11-2z" fill="none" stroke="#2E394A" stroke-width="1.4"/></svg>
+    </div>
+    <h1>The dungeon wins this one.</h1>
+    <p class="muted" id="death-line"></p>
+    <p class="new-best" id="death-best" hidden>New record depth!</p>
+    <div class="records-strip">
+      <div class="rec"><div class="rec-num peach" id="death-depth">0</div><div class="rec-label">depth reached</div></div>
+      <div class="rec"><div class="rec-num" id="death-score">0</div><div class="rec-label">score</div></div>
+      <div class="rec"><div class="rec-num cyan" id="death-record">0</div><div class="rec-label">best depth</div></div>
+    </div>
+    <div class="death-actions">
+      <button id="death-retry" class="primary">Run it again</button>
+      <button id="death-lobby" class="ghost">Back to the lobby</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" hidden></div>
+
+<script src="shared.js?v=7"></script>
+<script src="practice.js?v=7"></script>
+</body>
+</html>

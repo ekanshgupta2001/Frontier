@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "subject": "Number Theory",
+    "version": "0.1",
+    "node_count": 35,
+    "demo_path": ["divisibility", "primes", "factorization", "gcd_lcm", "euclidean", "divisor_functions", "bases", "congruence", "mod_arith", "mod_exp", "bezout", "mod_inverse", "linear_diophantine", "linear_congruence", "crt", "fermat_little", "totient", "euler_theorem", "order"],
+    "demo_path_note": "Walkable in order: every node's prereqs appear before it. bases, bezout and linear_diophantine were added on 2026-08-19 because the original 16-node path reached mod_exp, mod_inverse and linear_congruence before their prerequisites. graph.py validate() enforces this.",
+    "notes": "Tiers 0-1 are the demo surface. Tiers 2-3 exist so the graph has depth to show, but do not author problems for them unless there is time left over."
+  },
+
+  "tiers": [
+    { "id": 0, "name": "Core foundation", "desc": "Arithmetic structure of the integers. No modular language yet." },
+    { "id": 1, "name": "Contest foundation", "desc": "Modular arithmetic and the classical theorems. This is where most contest number theory lives." },
+    { "id": 2, "name": "Olympiad", "desc": "Valuations, quadratic residues, multiplicative machinery, descent." },
+    { "id": 3, "name": "Applied / computational", "desc": "Algorithms and cryptography built on tier 1." }
+  ],
+
+  "nodes": [
+    {
+      "id": "divisibility",
+      "name": "Divisibility and multiples",
+      "tier": 0,
+      "prereqs": [],
+      "concept": "a | b means b = ak for some integer k. Divisibility is transitive and respects integer linear combinations.",
+      "assesses": "Can the student decide whether one integer divides another and chain divisibility facts?",
+      "generator": "Given random a in [2,20], k in [2,30], b = a*k (+ optional offset r != 0 for negative cases): 'Does a divide b?' or 'Find all divisors of b under 50.' Answer computed directly.",
+      "verify": "integer equality"
+    },
+    {
+      "id": "primes",
+      "name": "Primes and composites",
+      "tier": 0,
+      "prereqs": ["divisibility"],
+      "concept": "A prime has exactly two positive divisors. Trial division up to sqrt(n) is sufficient to test primality.",
+      "assesses": "Can the student classify n and justify stopping trial division at sqrt(n)?",
+      "generator": "Random n in [50,400], biased 50/50 prime vs semiprime. Ask 'is n prime' or 'what is the largest prime you must test'.",
+      "verify": "sympy.isprime"
+    },
+    {
+      "id": "factorization",
+      "name": "Prime factorization",
+      "tier": 0,
+      "prereqs": ["primes"],
+      "concept": "Fundamental theorem of arithmetic: every integer > 1 has a unique multiset of prime factors.",
+      "assesses": "Can the student produce the canonical factorization and read exponents off it?",
+      "generator": "Sample 2-4 primes from [2,17] with exponents 1-3, multiply to get n. Ask for the factorization or for a specific prime's exponent.",
+      "verify": "sympy.factorint equality on the dict"
+    },
+    {
+      "id": "gcd_lcm",
+      "name": "GCD and LCM",
+      "tier": 0,
+      "prereqs": ["factorization"],
+      "concept": "gcd takes min exponents, lcm takes max exponents, and gcd(a,b) * lcm(a,b) = ab.",
+      "assesses": "Can the student compute both from factorizations and use the product identity?",
+      "generator": "Build a and b from a shared prime pool so the gcd is non-trivial. Ask for gcd, lcm, or the missing value given the other three in the identity.",
+      "verify": "sympy.gcd / sympy.lcm"
+    },
+    {
+      "id": "euclidean",
+      "name": "Euclidean algorithm",
+      "tier": 0,
+      "prereqs": ["gcd_lcm"],
+      "concept": "gcd(a,b) = gcd(b, a mod b). Terminates because the remainder strictly decreases.",
+      "assesses": "Can the student run the algorithm on numbers too large to factor by hand?",
+      "generator": "a, b random in [10^3, 10^5] with a controlled gcd. Ask for gcd, or for the number of division steps.",
+      "verify": "sympy.gcd; step count from a reference implementation"
+    },
+    {
+      "id": "divisor_functions",
+      "name": "Divisor count and sum",
+      "tier": 0,
+      "prereqs": ["factorization"],
+      "concept": "For n = prod p_i^e_i, tau(n) = prod (e_i + 1) and sigma(n) = prod (p_i^(e_i+1) - 1)/(p_i - 1).",
+      "assesses": "Can the student go from factorization to divisor statistics without listing divisors?",
+      "generator": "Same construction as factorization. Ask for tau(n), sigma(n), or 'find the smallest n with exactly k divisors'.",
+      "verify": "sympy.divisor_count / sympy.divisor_sigma"
+    },
+    {
+      "id": "bases",
+      "name": "Base representation",
+      "tier": 0,
+      "prereqs": ["divisibility"],
+      "concept": "Every n has a unique representation in base b as a sum of digits times powers of b.",
+      "assesses": "Can the student convert both directions and reason about digit counts?",
+      "generator": "Random n in [100, 5000], base in {2,3,5,7,8,16}. Convert, or ask for digit count / leading digit.",
+      "verify": "string equality after normalization"
+    },
+    {
+      "id": "digit_rules",
+      "name": "Digit sums and divisibility rules",
+      "tier": 0,
+      "prereqs": ["bases", "divisibility"],
+      "concept": "Divisibility rules for 3, 9, 11 come from 10 ≡ 1 (mod 3, 9) and 10 ≡ -1 (mod 11).",
+      "assesses": "Can the student apply a rule and, more importantly, explain why it works?",
+      "generator": "Construct an n-digit number with one digit left as an unknown; ask for the digit making it divisible by 3, 9, or 11.",
+      "verify": "modular check over all 10 digit values"
+    },
+
+    {
+      "id": "congruence",
+      "name": "Congruence relation",
+      "tier": 1,
+      "prereqs": ["divisibility", "euclidean"],
+      "concept": "a ≡ b (mod n) iff n | (a - b). It is an equivalence relation and partitions Z into residue classes.",
+      "assesses": "Can the student translate between the divisibility and congruence statements?",
+      "generator": "Random n in [3,30], a in [0,500]. Ask for the residue, or whether two given numbers are congruent.",
+      "verify": "integer mod"
+    },
+    {
+      "id": "mod_arith",
+      "name": "Modular addition and multiplication",
+      "tier": 1,
+      "prereqs": ["congruence"],
+      "concept": "Congruence is preserved under addition, subtraction, and multiplication, but not division.",
+      "assesses": "Can the student reduce early instead of computing the full product?",
+      "generator": "Random large a, b and modulus n. Ask for (a*b + c) mod n. Include one distractor per set where naive division fails.",
+      "verify": "integer arithmetic"
+    },
+    {
+      "id": "mod_exp",
+      "name": "Modular exponentiation",
+      "tier": 1,
+      "prereqs": ["mod_arith", "bases"],
+      "concept": "Repeated squaring computes a^k mod n in O(log k) multiplications using the binary expansion of k.",
+      "assesses": "Can the student compute a^k mod n for k far beyond brute force?",
+      "generator": "a in [2,50], k in [10^3, 10^6], n in [7, 200]. Ask for the value, or for the last digit of a^k.",
+      "verify": "pow(a, k, n)"
+    },
+    {
+      "id": "mod_inverse",
+      "name": "Modular inverses",
+      "tier": 1,
+      "prereqs": ["mod_arith", "bezout"],
+      "concept": "a has an inverse mod n iff gcd(a,n) = 1; the extended Euclidean algorithm constructs it.",
+      "assesses": "Can the student decide existence and then construct the inverse?",
+      "generator": "Pick n, then a coprime to n half the time and sharing a factor the other half. Ask for the inverse or 'explain why none exists'.",
+      "verify": "check a*x ≡ 1 (mod n)"
+    },
+    {
+      "id": "bezout",
+      "name": "Bezout's identity",
+      "tier": 1,
+      "prereqs": ["euclidean"],
+      "concept": "There exist integers x, y with ax + by = gcd(a,b), found by back-substituting the Euclidean algorithm.",
+      "assesses": "Can the student run extended Euclid and produce a valid (x,y)?",
+      "generator": "a, b in [10, 500]. Ask for any valid pair; the grader accepts any (x,y) satisfying the equation, not one canonical answer.",
+      "verify": "evaluate ax + by == gcd(a,b)"
+    },
+    {
+      "id": "linear_diophantine",
+      "name": "Linear Diophantine equations",
+      "tier": 1,
+      "prereqs": ["bezout"],
+      "concept": "ax + by = c has integer solutions iff gcd(a,b) | c, and then infinitely many in an arithmetic family.",
+      "assesses": "Can the student decide solvability and describe the full solution family?",
+      "generator": "Choose a, b, then c as either a multiple of gcd (solvable) or not (unsolvable). Ask for a solution or the smallest positive x.",
+      "verify": "substitution check plus minimality scan"
+    },
+    {
+      "id": "linear_congruence",
+      "name": "Linear congruences",
+      "tier": 1,
+      "prereqs": ["mod_inverse", "linear_diophantine"],
+      "concept": "ax ≡ b (mod n) has gcd(a,n) solutions mod n when gcd(a,n) | b, and none otherwise.",
+      "assesses": "Can the student count solutions, not just find one?",
+      "generator": "Vary gcd(a,n) across 1, 2, and a non-dividing case. Ask for all solutions mod n.",
+      "verify": "brute-force residue scan on the reference side"
+    },
+    {
+      "id": "crt",
+      "name": "Chinese remainder theorem",
+      "tier": 1,
+      "prereqs": ["linear_congruence"],
+      "concept": "Pairwise coprime moduli give a unique solution modulo their product.",
+      "assesses": "Can the student combine systems, and recognize when moduli are not coprime?",
+      "generator": "2-3 congruences with coprime moduli from {3,4,5,7,9,11}. Occasionally emit a non-coprime consistent/inconsistent pair as a trap.",
+      "verify": "sympy.ntheory.modular.crt"
+    },
+    {
+      "id": "fermat_little",
+      "name": "Fermat's little theorem",
+      "tier": 1,
+      "prereqs": ["mod_exp", "mod_inverse"],
+      "concept": "For prime p and gcd(a,p)=1, a^(p-1) ≡ 1 (mod p). Reduces exponents mod p-1.",
+      "assesses": "Can the student reduce a huge exponent using the theorem rather than by squaring?",
+      "generator": "Prime p in [7,97], a coprime to p, exponent k in [10^4, 10^9]. Ask for a^k mod p.",
+      "verify": "pow(a, k, p)"
+    },
+    {
+      "id": "totient",
+      "name": "Euler's totient function",
+      "tier": 1,
+      "prereqs": ["factorization", "congruence"],
+      "concept": "phi(n) counts integers in [1,n] coprime to n; phi is multiplicative and phi(p^e) = p^e - p^(e-1).",
+      "assesses": "Can the student compute phi from a factorization and use multiplicativity?",
+      "generator": "n built from 2-3 primes with exponents. Ask for phi(n), or for n given phi(n) in small cases.",
+      "verify": "sympy.totient"
+    },
+    {
+      "id": "euler_theorem",
+      "name": "Euler's theorem",
+      "tier": 1,
+      "prereqs": ["totient", "fermat_little"],
+      "concept": "a^phi(n) ≡ 1 (mod n) when gcd(a,n)=1. Generalizes Fermat to composite moduli.",
+      "assesses": "Can the student reduce exponents mod phi(n) for composite n?",
+      "generator": "Composite n in [15,200], a coprime to n, exponent k large. Ask for a^k mod n.",
+      "verify": "pow(a, k, n)"
+    },
+    {
+      "id": "order",
+      "name": "Multiplicative order and cyclicity",
+      "tier": 1,
+      "prereqs": ["euler_theorem"],
+      "concept": "The order of a mod n is the least k > 0 with a^k ≡ 1, and it always divides phi(n).",
+      "assesses": "Can the student find the order by testing divisors of phi(n) rather than all k?",
+      "generator": "n and coprime a. Ask for ord_n(a), or for the cycle length of the last digits of a^k.",
+      "verify": "sympy.n_order"
+    },
+    {
+      "id": "wilson",
+      "name": "Wilson's theorem",
+      "tier": 1,
+      "prereqs": ["fermat_little"],
+      "concept": "(p-1)! ≡ -1 (mod p) exactly when p is prime.",
+      "assesses": "Can the student use factorial congruences and the primality characterization?",
+      "generator": "Prime or composite p in [5,40]. Ask for (p-1)! mod p.",
+      "verify": "direct factorial mod computation"
+    },
+    {
+      "id": "pigeonhole_nt",
+      "name": "Pigeonhole in number theory",
+      "tier": 1,
+      "prereqs": ["congruence"],
+      "concept": "Among n+1 integers, two share a residue mod n, the standard route to 'some subset is divisible by n' claims.",
+      "assesses": "Can the student spot when a residue-class counting argument closes a problem?",
+      "generator": "Hard to auto-generate. Hand-author 3-5 problems; keep this node proof-flavoured and mark it non-generated.",
+      "verify": "hand-authored answer key"
+    },
+
+    { "id": "p_adic", "name": "p-adic valuation", "tier": 2, "prereqs": ["factorization", "mod_exp"], "concept": "v_p(n) is the exponent of p in n; v_p(ab) = v_p(a) + v_p(b)." },
+    { "id": "legendre_formula", "name": "Legendre's formula", "tier": 2, "prereqs": ["p_adic"], "concept": "v_p(n!) = sum floor(n / p^i); counts trailing zeros and factorial divisibility." },
+    { "id": "lte", "name": "Lifting the exponent", "tier": 2, "prereqs": ["legendre_formula", "order"], "concept": "v_p(a^n - b^n) decomposes cleanly when p | a - b; the workhorse for exponential divisibility." },
+    { "id": "quadratic_residues", "name": "Quadratic residues", "tier": 2, "prereqs": ["euler_theorem", "order"], "concept": "Exactly half the nonzero residues mod an odd prime are squares; Euler's criterion tests membership." },
+    { "id": "legendre_symbol", "name": "Legendre symbol and reciprocity", "tier": 2, "prereqs": ["quadratic_residues"], "concept": "Quadratic reciprocity relates (p|q) and (q|p), turning residue tests into a fast algorithm." },
+    { "id": "primitive_roots", "name": "Primitive roots", "tier": 2, "prereqs": ["order"], "concept": "A primitive root generates the whole multiplicative group; they exist exactly for n = 1,2,4,p^k,2p^k." },
+    { "id": "multiplicative_functions", "name": "Multiplicative functions and Mobius", "tier": 2, "prereqs": ["divisor_functions", "totient"], "concept": "Dirichlet convolution of multiplicative functions is multiplicative; mu is the inverse of the constant function 1." },
+    { "id": "mobius_inversion", "name": "Mobius inversion", "tier": 2, "prereqs": ["multiplicative_functions"], "concept": "Recovers f from its divisor-sum, the standard tool for counting-by-divisor problems." },
+    { "id": "descent", "name": "Infinite descent and Vieta jumping", "tier": 2, "prereqs": ["linear_diophantine", "quadratic_residues"], "concept": "Assume a minimal solution, construct a smaller one, contradiction. The core olympiad Diophantine technique." },
+    { "id": "sum_two_squares", "name": "Sum of two squares", "tier": 2, "prereqs": ["quadratic_residues", "factorization"], "concept": "n is a sum of two squares iff every prime ≡ 3 (mod 4) appears to an even power." },
+
+    { "id": "sieve", "name": "Sieve of Eratosthenes", "tier": 3, "prereqs": ["primes"], "concept": "Mark composites by stepping through multiples; O(n log log n) primes up to n." },
+    { "id": "primality_testing", "name": "Probabilistic primality testing", "tier": 3, "prereqs": ["fermat_little", "mod_exp"], "concept": "Fermat and Miller-Rabin tests, plus why Carmichael numbers defeat the naive version." },
+    { "id": "rsa", "name": "RSA", "tier": 3, "prereqs": ["euler_theorem", "mod_inverse", "primality_testing"], "concept": "Key generation from two large primes; encryption and decryption are inverse exponentiations mod n." }
+  ]
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lessons · Frontier</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><rect x='1' y='1' width='28' height='28' rx='8' fill='%2308090D' stroke='%23222A36'/><path d='M16.5 5 9 16h5l-1.5 9L21 13.5h-5.2z' fill='%236366F1'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">
+    <svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect x="1" y="1" width="28" height="28" rx="8" fill="#10141B" stroke="#222A36"/><path d="M16.5 5 9 16h5l-1.5 9L21 13.5h-5.2z" fill="#6366F1"/></svg>
+    <span class="wordmark">FRONTIER</span>
+  </a>
+  <nav class="topnav">
+    <a href="/">Home</a>
+    <a href="/learn" class="active">Learn</a>
+    <a href="/practice">Challenges</a>
+  </nav>
+  <div class="head-right">
+    <span class="context">lessons · number theory</span>
+    <div class="who" id="who" hidden>
+      <span id="who-title" class="who-title" hidden></span>
+      <span id="who-name"></span>
+      <a href="#" id="switch-user">switch</a>
+    </div>
+    <span class="avatar" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#A7B3C4" stroke-width="1.3"><circle cx="8" cy="5.4" r="2.7"/><path d="M2.5 14c.9-2.9 3-4.3 5.5-4.3s4.6 1.4 5.5 4.3"/></svg></span>
+  </div>
+</header>
+
+<section>
+  <!-- shown instead of the path when no name is remembered: the lock
+       needs to know whose progress it is gating -->
+  <div class="card login-card" id="learn-login" hidden>
+    <h1>Who's learning?</h1>
+    <p class="muted">Lessons unlock as you complete the ones they build on,
+       so the path needs a name to know your progress. New here? A quick
+       six-question quiz finds where your lessons should start.</p>
+    <form id="learn-login-form">
+      <input id="learn-login-name" type="text" placeholder="Your name (e.g. ava_g)"
+             autocomplete="off" maxlength="32" spellcheck="false">
+      <button type="submit" class="primary">Open the lessons</button>
+    </form>
+    <p class="tiny muted">Same name as on Practice; it picks up where you left off.</p>
+  </div>
+  <!-- rendered by learn.js from /api/curriculum:
+       /learn = the lesson index, /learn#<node_id> = one lesson -->
+  <div id="curriculum-body" class="learn-wrap"></div>
+</section>
+
+<div id="toast" hidden></div>
+
+<script src="shared.js?v=7"></script>
+<script src="graph.js?v=9"></script>
+<script src="learn.js?v=7"></script>
+</body>
+</html>
