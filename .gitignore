@@ -7,3 +7,9 @@ __pycache__/
 *.pyc
 .claude/
 *.md
+
+# curriculum.md is NOT a doc — it is runtime data. app.py calls
+# load_curriculum() at import, so a checkout without it cannot boot. It was
+# already lost once to the *.md rule above; keep these exceptions.
+!backend/ntgen/curriculum.md
+!README.md

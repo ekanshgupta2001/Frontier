@@ -1,0 +1,5 @@
+flask>=2.3
+sympy>=1.12
+
+# No gunicorn on Vercel — its Python runtime wraps the WSGI callable in
+# api/index.py itself. Add gunicorn>=21 if this ever moves to a normal host.
