@@ -13,3 +13,4 @@ __pycache__/
 # already lost once to the *.md rule above; keep these exceptions.
 !backend/ntgen/curriculum.md
 !README.md
+.vercel
